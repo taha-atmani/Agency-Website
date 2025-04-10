@@ -1,0 +1,168 @@
+body {
+    background-color: #fffdf0;
+    color: #335c3a;
+    margin: 0px;
+    font-family: 'Forma DJR Banner', sans-serif;
+}
+
+a {
+    color: #335c3a;
+    font-style: normal;
+    text-decoration: none;
+    font-weight: bold;
+    
+}
+
+.collapse {
+    display: flex;
+    margin: 10px;
+}
+
+.bannertitle {
+    display: flex;
+    width: 100%;
+    margin-left: 50px;
+}
+
+.bannertext {
+    width: 50%;
+    font-size:x-large;
+
+}
+
+
+.bannerback {
+    position: static;
+    width: 50%;
+    margin-right: 0px;
+    display: flex;
+}
+
+
+.bannerimg {
+    width: 50%;
+    position: static;
+    top: 0px;
+}
+
+
+.btn {
+    background-color: #0EAD69;
+    color: white;
+    border-radius: 15px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: orange;
+}
+
+.nav-item {
+    padding: 20px;
+}
+
+.contactimg {
+    width: 50%;
+}
+
+.contact {
+    display: flex;
+    background-image: url(./img/backgroundform.png);
+
+    
+}
+
+.contactform {
+    width: 50%;
+}
+
+.form {
+    background-color: white;
+    margin: 50px;
+    padding: 20px;
+    text-align: center;
+    color: orange;
+}
+
+footer {
+    text-align: center;
+    display: flex;
+    padding: 20px;
+    margin: 20px;
+}
+
+.label {
+    text-align: left;
+}
+
+.service {
+    position: relative;
+    width: 100%;
+    padding: 45px 0 15px 0;
+    text-align: center;
+    background-image: url(img/serviceback.png);
+    background-size:cover;
+}
+
+.service .service-item {
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: ease-out 0.5s;
+}
+
+.work {
+    background-image: url(img/tranche.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 60%;
+    display: flex;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 100px;
+    height: 600px;
+
+}
+
+.workleft {
+    width: 50%;
+    margin-left: 100px;
+}
+
+.workright {
+    width: 50%;
+    text-align: center;
+}
+
+.worktext {
+    margin: 50px;
+}
+
+.workbtn {
+    text-align: center;
+}
+
+
+.about {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.abouttext {
+    width: 70%;
+    margin: 30px;
+}
+
+.aboutbanner {
+    width: 30%;
+
+}
+
+.contactbtn {
+    width: 100%;
+}
