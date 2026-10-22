@@ -1,35 +1,630 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SRT · 5 maquettes 3D</title>
+<title>SRT | Best rental car in Dubai</title>
+<meta name="description" content="Discover the best car rental services in UAE with SRT Car Rental. Luxury and budget short-term car rental in Dubai, 24/7 service and free delivery.">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="fetch" href="https://threejs.org/examples/models/gltf/ferrari.glb" crossorigin>
 <style>
-  :root{--bg:#f4f2ee;--ink:#141414;--muted:#6d6a64;--line:#dedad2}
+  :root{
+    --bg:#060606;--panel:#0e0e0e;--panel2:#151515;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
+    --text:#f3f3f3;--muted:#8b8b8b;--yellow:#f5c400;--light:#ececec;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif;padding:60px 5vw}
-  h1{font-size:clamp(32px,5vw,56px);letter-spacing:-.03em;line-height:1}
-  p.lead{color:var(--muted);max-width:640px;margin:14px 0 44px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-  a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s}
-  a.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px #0001}
-  a.card img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;border-bottom:1px solid var(--line)}
-  .tx{padding:18px}
-  .tx h2{font-size:20px}
-  .tx p{color:var(--muted);font-size:14px;margin-top:6px}
-  .tx small{display:block;margin-top:12px;font-size:12px;color:var(--muted)}
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto!important}
+  body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* Loader */
+  #loader{position:fixed;inset:0;z-index:100;background:#030303;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .9s ease,visibility .9s}
+  #loader.done{opacity:0;visibility:hidden}
+  #loader img{width:120px;opacity:.9}
+  #loader .bar{width:180px;height:2px;background:#ffffff1a;border-radius:2px;overflow:hidden}
+  #loader .bar i{display:block;height:100%;width:0;background:var(--yellow);transition:width .3s}
+  #loader small{font-size:11px;letter-spacing:.35em;color:var(--muted)}
+
+  /* Nav */
+  nav{position:fixed;top:22px;left:4vw;right:4vw;z-index:50;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+  nav>*{pointer-events:auto}
+  .logo img{height:44px;width:auto}
+  .menu{display:flex;gap:4px;padding:6px;border-radius:99px;background:rgba(14,14,14,.82);border:1px solid var(--line)}
+  .menu a{padding:11px 20px;border-radius:99px;font-size:13px;color:var(--muted);transition:color .25s,background .25s}
+  .menu a:hover{color:var(--text)}
+  .menu a.on{color:var(--text);background:#ffffff14}
+  .side{display:flex;align-items:center;gap:6px;padding:5px;border-radius:99px;background:rgba(14,14,14,.82);border:1px solid var(--line)}
+  .side .cc{font-size:11px;line-height:1.15;padding:0 12px;color:#cfcfcf}
+  .side .cc b{color:#36d576;font-size:9px}
+  .side .lang{font-size:12px;color:var(--muted);padding:0 10px}
+  .phone{background:#fff;color:#111;font-size:13px;font-weight:500;padding:12px 22px;border-radius:99px;white-space:nowrap;transition:background .25s}
+  .phone:hover{background:var(--yellow)}
+
+  /* Scroll story */
+  .story{position:relative;height:640vh}
+  .stage{position:sticky;top:0;height:100vh;overflow:hidden;background:#030303}
+  #c{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 70% at 50% 55%,transparent 45%,rgba(0,0,0,.72) 100%)}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  .chap{position:absolute;inset:0;pointer-events:none;opacity:0;will-change:opacity,transform}
+  .chap .pe{pointer-events:auto}
+  .shade-l{background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.35) 38%,transparent 58%)}
+  .shade-r{background:linear-gradient(270deg,rgba(0,0,0,.8),rgba(0,0,0,.4) 38%,transparent 60%)}
+
+  /* Chapter 0: hero */
+  .stats{position:absolute;left:4vw;top:31vh;display:flex;flex-direction:column;gap:10px}
+  .stat{width:146px;padding:15px 18px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:19px;line-height:1.25}
+  .stat span{display:block;color:var(--muted);font-size:14px}
+  .tag{position:absolute;left:calc(4vw + 170px);top:calc(31vh + 96px);max-width:180px;font-size:12px;line-height:1.4;color:#d0d0d0}
+  .tag b{color:var(--yellow);font-weight:500}
+  .lux{position:absolute;right:4vw;top:30vh;text-align:right;font-size:12px;line-height:1.4;color:#d0d0d0}
+  .h1{position:absolute;right:4vw;top:42vh;font-size:clamp(46px,5.8vw,92px);font-weight:300;letter-spacing:-.04em;line-height:1}
+  .h1 em{font-style:normal;color:var(--yellow)}
+  .cta{position:absolute;left:50%;bottom:9vh;transform:translateX(-50%);background:#fff;color:#111;padding:24px 64px;border-radius:99px;font-size:15px;font-weight:500;white-space:nowrap;transition:background .3s,padding .3s}
+  .cta:hover{background:var(--yellow);padding:24px 74px}
+  .words{position:absolute;left:4vw;bottom:5vh;display:flex;gap:30px;font-size:12px;letter-spacing:.14em;color:#bdbdbd}
+  .hint{position:absolute;right:4vw;bottom:5vh;font-size:11px;letter-spacing:.3em;color:var(--muted);display:flex;align-items:center;gap:12px}
+  .hint i{width:1px;height:34px;background:linear-gradient(var(--text),transparent);animation:hint 1.8s ease-in-out infinite}
+  @keyframes hint{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  /* Generic chapter blocks */
+  .blk{position:absolute;max-width:440px}
+  .kick{font-size:11px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase}
+  .blk h2,.sec h2{font-size:clamp(38px,4.4vw,68px);font-weight:300;letter-spacing:-.04em;line-height:1.02;margin:16px 0 18px}
+  .blk h2 em,.sec h2 em{font-style:normal;color:var(--yellow)}
+  .blk p{color:#bdbdbd;line-height:1.6;font-size:15px}
+  .specs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+  .specs div{padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+  .specs b{display:block;font-size:26px;font-weight:300;letter-spacing:-.03em}
+  .specs span{font-size:12px;color:var(--muted)}
+  .price{display:flex;align-items:baseline;gap:10px;margin-top:24px}
+  .price b{font-size:44px;font-weight:300;letter-spacing:-.04em;color:var(--yellow)}
+  .price span{color:var(--muted);font-size:14px}
+  .list{list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:12px}
+  .list li{display:flex;gap:14px;align-items:center;font-size:15px;color:#d6d6d6}
+  .list li i{width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--yellow)}
+  .big{position:absolute;left:0;right:0;text-align:center;font-size:clamp(56px,11vw,190px);font-weight:300;letter-spacing:-.06em;line-height:.9;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.22)}
+  .btns{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:99px;font-size:14px;font-weight:500;transition:background .25s,color .25s}
+  .btn.w{background:#fff;color:#111}.btn.w:hover{background:var(--yellow)}
+  .btn.g{border:1px solid var(--line2)}.btn.g:hover{background:#fff;color:#111}
+  .prog{position:absolute;right:4vw;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px}
+  .prog i{width:3px;height:26px;border-radius:3px;background:#ffffff26;transition:background .3s,height .3s}
+  .prog i.on{background:var(--yellow);height:44px}
+
+  /* Sections */
+  .sec{padding:140px 4vw;position:relative}
+  .sec .top{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;margin-bottom:56px}
+  .sec .top h2{margin-bottom:0}
+  .sec .top p{color:var(--muted);max-width:380px;line-height:1.6}
+
+  .services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .svc{position:relative;aspect-ratio:3/4;border-radius:24px;overflow:hidden;background:var(--panel)}
+  .svc img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1);filter:saturate(.9)}
+  .svc:hover img{transform:scale(1.06)}
+  .svc::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.85))}
+  .svc div{position:absolute;left:22px;right:22px;bottom:22px;z-index:1;display:flex;justify-content:space-between;align-items:end}
+  .svc h3{font-weight:400;font-size:24px;letter-spacing:-.02em;text-transform:capitalize}
+  .svc span{width:42px;height:42px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;transition:background .25s}
+  .svc:hover span{background:var(--yellow)}
+
+  .filters{display:flex;gap:6px;flex-wrap:wrap}
+  .filters button{padding:12px 20px;border-radius:99px;border:1px solid var(--line);font-size:13px;color:var(--muted);transition:all .25s}
+  .filters button.on,.filters button:hover{background:#fff;color:#111;border-color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .car{border-radius:22px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transition:border-color .3s,transform .3s;display:flex;flex-direction:column}
+  .car:hover{border-color:var(--line2);transform:translateY(-4px)}
+  .car .ph{background:var(--light);aspect-ratio:3/2;position:relative}
+  .car .ph img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+  .car .ph em{position:absolute;top:12px;left:12px;font-style:normal;font-size:11px;background:#111;color:#fff;padding:6px 11px;border-radius:99px}
+  .car .bd{padding:20px;display:flex;flex-direction:column;gap:14px;flex:1}
+  .car h4{font-weight:500;font-size:17px;letter-spacing:-.01em}
+  .car .meta{display:flex;gap:6px;flex-wrap:wrap}
+  .car .meta span{font-size:11px;color:#bdbdbd;border:1px solid var(--line);padding:5px 9px;border-radius:99px}
+  .car .row{display:flex;justify-content:space-between;align-items:end;margin-top:auto}
+  .car .d b{font-size:26px;font-weight:300;letter-spacing:-.03em}
+  .car .d small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .car .row a{padding:11px 18px;border-radius:99px;background:#fff;color:#111;font-size:13px;font-weight:500;transition:background .25s}
+  .car .row a:hover{background:var(--yellow)}
+  .car.hide{display:none}
+  .more{display:flex;justify-content:center;margin-top:40px}
+
+  .brands{display:grid;grid-template-columns:repeat(10,1fr);gap:10px}
+  .brands a{aspect-ratio:1;border-radius:18px;background:var(--light);display:grid;place-items:center;padding:16%;transition:transform .3s,background .3s}
+  .brands a:hover{transform:translateY(-4px);background:#fff}
+  .brands img{max-height:100%;object-fit:contain}
+
+  .join{margin:0 4vw;border-radius:32px;overflow:hidden;display:grid;grid-template-columns:1.1fr 1fr;background:var(--panel);border:1px solid var(--line)}
+  .join .tx{padding:70px 5vw;display:flex;flex-direction:column;justify-content:center}
+  .join h2{font-size:clamp(34px,3.6vw,56px);font-weight:300;letter-spacing:-.04em;line-height:1.05;margin:16px 0 14px}
+  .join h2 em{font-style:normal;color:var(--yellow)}
+  .join form{display:flex;gap:6px;padding:6px;border-radius:99px;background:#ffffff0d;border:1px solid var(--line);margin-top:10px;max-width:460px}
+  .join input{flex:1;min-width:0;background:none;border:0;color:var(--text);padding:0 18px;font:14px Inter;outline:none}
+  .join .im{min-height:420px;background:url(assets/popup.jpg) center/cover}
+
+  .news{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .post{border-radius:22px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transition:border-color .3s}
+  .post:hover{border-color:var(--line2)}
+  .post .im{aspect-ratio:443/240;background:var(--light)}
+  .post .im img{width:100%;height:100%;object-fit:cover}
+  .post .tx{padding:22px}
+  .post small{font-size:11px;letter-spacing:.2em;color:var(--yellow);text-transform:uppercase}
+  .post h4{font-weight:400;font-size:20px;letter-spacing:-.02em;line-height:1.25;margin:10px 0}
+  .post p{color:var(--muted);font-size:14px;line-height:1.55}
+
+  .contact{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .contact .card{border-radius:24px;background:var(--panel);border:1px solid var(--line);padding:40px}
+  .contact .card h3{font-weight:300;font-size:34px;letter-spacing:-.03em;margin-bottom:24px}
+  .contact .ln{display:flex;justify-content:space-between;padding:16px 0;border-top:1px solid var(--line);font-size:15px}
+  .contact .ln span{color:var(--muted)}
+  .map{border-radius:24px;overflow:hidden;border:1px solid var(--line);min-height:380px;position:relative;background:var(--panel)}
+  .map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(1) invert(.92) contrast(.9)}
+
+  footer{margin-top:120px;border-top:1px solid var(--line);padding:50px 4vw 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;color:var(--muted);font-size:13px}
+  footer .links{display:flex;gap:24px;flex-wrap:wrap}
+  footer a:hover{color:var(--text)}
+
+  .rv{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+
+  @media (max-width:1100px){
+    .menu{display:none}
+    .grid{grid-template-columns:repeat(3,1fr)}
+    .brands{grid-template-columns:repeat(6,1fr)}
+  }
+  @media (max-width:760px){
+    .shade-l,.shade-r{background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,.4) 45%,transparent 65%)}
+    .logo img{height:36px}
+    .side .cc,.side .lang{display:none}
+    .stats{top:auto;bottom:22vh;left:4vw;right:4vw;flex-direction:row}
+    .stat{width:auto;flex:1;font-size:15px;padding:12px}
+    .stat span{font-size:11px}
+    .tag,.lux,.words,.hint,.prog{display:none}
+    .h1{top:14vh;left:4vw;right:auto;font-size:46px}
+    .cta{padding:20px 46px;bottom:10vh}
+    .blk{left:5vw!important;right:5vw!important;top:auto!important;bottom:7vh!important;max-width:none}
+    .blk h2{font-size:36px}
+    .specs b{font-size:20px}
+    .services,.news,.contact{grid-template-columns:1fr}
+    .svc{aspect-ratio:4/3}
+    .grid{grid-template-columns:1fr 1fr}
+    .car .bd{padding:14px}.car .d b{font-size:20px}.car .meta{display:none}
+    .brands{grid-template-columns:repeat(4,1fr)}
+    .join{grid-template-columns:1fr}.join .im{min-height:260px}
+  }
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.hint i{animation:none}}
 </style>
 </head>
 <body>
-  <h1>SRT Rent a Car · 6 maquettes 3D</h1>
-  <p class="lead">Six directions pour la page d'accueil de srt-car.com, chacune avec une scène 3D en temps réel (Three.js). Les contenus (tarifs, services, contacts, articles) viennent du site actuel.</p>
-  <div class="grid">
-    <a class="card" href="1-noir-or.html"><img src="previews/1.png" alt="Aperçu maquette 1"><div class="tx"><h2>Noir & Or</h2><p>Showroom de luxe : sol miroir, anneaux dorés, voiture en rotation et choix de la peinture en direct.</p><small>Cormorant + Manrope · orbite 3D · teinte de carrosserie</small></div></a>
-    <a class="card" href="2-desert-drive.html"><img src="previews/2.png" alt="Aperçu maquette 2"><div class="tx"><h2>Desert Drive</h2><p>Récit au scroll : la voiture traverse des dunes infinies au coucher du soleil, avec une caméra qui change de plan à chaque chapitre.</p><small>Syne + DM Sans · terrain procédural · caméra au scroll</small></div></a>
-    <a class="card" href="3-studio-configurator.html"><img src="previews/3.png" alt="Aperçu maquette 3"><div class="tx"><h2>Studio Configurator</h2><p>Configurateur de location : catégorie, modèle, couleur et durée, avec le prix calculé en direct et des vues caméra prédéfinies.</p><small>Inter Tight · hotspots 3D · calcul de prix</small></div></a>
-    <a class="card" href="4-neon-night.html"><img src="previews/4.png" alt="Aperçu maquette 4"><div class="tx"><h2>Neon Night</h2><p>Dubaï la nuit en synthwave : ville néon générée, tour façon Burj, grille animée, bloom et parallaxe à la souris.</p><small>Unbounded · post-processing bloom · tirage au sort</small></div></a>
-    <a class="card" href="5-fleet-carousel.html"><img src="previews/5.png" alt="Aperçu maquette 5"><div class="tx"><h2>Fleet Carousel</h2><p>Plateau tournant low-poly façon jouet : six voitures modélisées en code, à faire défiler par glisser, flèches ou clic.</p><small>Archivo Black · voitures procédurales · style néo-brutaliste</small></div></a>
-    <a class="card" href="6-premium-drive.html"><img src="previews/6.png" alt="Aperçu maquette 6"><div class="tx"><h2>Premium Drive · Ferrari jaune</h2><p>Style cinématographique : la voiture sort de l'obscurité sur une route mouillée, la caméra tourne autour, puis burnout avec fumée et feux arrière.</p><small>Inter · séquence animée en boucle · bloom & reflets</small></div></a>
+
+<div id="loader"><img src="assets/logo.webp" alt="SRT Rent a Car"><div class="bar"><i id="lbar"></i></div><small id="lpct">0%</small></div>
+
+<nav>
+  <a class="logo" href="#top"><img src="assets/logo.webp" alt="SRT Rent a Car" width="164" height="80"></a>
+  <div class="menu">
+    <a class="on" href="#top">Home</a><a href="#fleet">Rental Cars</a><a href="#brands">Vehicle Brands</a><a href="#services">Services</a><a href="#news">Blog</a><a href="#contact">Contact</a>
   </div>
+  <div class="side"><span class="lang">EN · <a href="https://srt-car.com/ar">ع</a></span><span class="cc"><b>●</b> 24/7<br>service</span><a class="phone" href="https://wa.me/971509070094">+971 50 907 0094</a></div>
+</nav>
+
+<!-- 3D scroll story: the canvas stays pinned while the page scrolls through 5 chapters -->
+<section class="story" id="top">
+  <div class="stage">
+    <canvas id="c"></canvas>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+
+    <div class="chap" data-in="0" data-out=".11">
+      <div class="stats">
+        <div class="stat">24/7<span>service</span></div>
+        <div class="stat">Free<span>delivery</span></div>
+        <div class="stat">30+<span>brands</span></div>
+      </div>
+      <p class="tag"><b>SRT Rent a Car.</b> Luxury and budget car rental in Dubai, for those who don't just arrive. They make an entrance.</p>
+      <p class="lux">Best rental car<br>in Dubai,<br>ready today</p>
+      <h1 class="h1">Premium<br>Car Rental<br><em>Dubai.</em></h1>
+      <a class="cta pe" href="#fleet">Book your drive</a>
+      <div class="words"><span>Power</span><span>comfort</span><span>status</span></div>
+      <div class="hint">SCROLL<i></i></div>
+    </div>
+
+    <div class="chap shade-l" data-in=".15" data-out=".33">
+      <div class="blk" style="left:4vw;top:24vh">
+        <span class="kick">Featured · For rent</span>
+        <h2>Ferrari <em>F8 Spider.</em></h2>
+        <p>Open-top, mid-engine V8. The car that turns Sheikh Zayed Road into a soundtrack.</p>
+        <div class="specs">
+          <div><b>720 PS</b><span>3.9 L twin-turbo V8</span></div>
+          <div><b>2.9 s</b><span>0–100 km/h</span></div>
+          <div><b>340 km/h</b><span>Top speed</span></div>
+          <div><b>2</b><span>Seats · Convertible</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chap shade-r" data-in=".37" data-out=".53">
+      <div class="blk" style="right:4vw;top:26vh">
+        <span class="kick">Pricing</span>
+        <div class="price"><b>AED 3,500</b><span>/ day</span></div>
+        <div class="price" style="margin-top:4px"><b style="font-size:30px;color:var(--text)">AED 24,500</b><span>/ week</span></div>
+        <ul class="list">
+          <li><i>✓</i>250 km per day · 1,750 km per week</li>
+          <li><i>✓</i>Deposit 2,500 AED</li>
+          <li><i>✓</i>24/7 service</li>
+          <li><i>✓</i>Free delivery anywhere in Dubai</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chap" data-in=".57" data-out=".74">
+      <div class="big" style="top:14vh">Power.<br>Comfort.<br>Status.</div>
+    </div>
+
+    <div class="chap shade-l" data-in=".8" data-out="1.01">
+      <div class="blk" style="left:4vw;top:30vh">
+        <span class="kick">Join the SRT family</span>
+        <h2>Get <em>20% off</em><br>your next ride.</h2>
+        <p>Subscribe and register with the same email to unlock your discount.</p>
+        <div class="btns pe"><a class="btn w" href="https://wa.me/971509070094">Book on WhatsApp →</a><a class="btn g" href="https://srt-car.com/en/car/25">See the F8 Spider</a></div>
+      </div>
+    </div>
+
+    <div class="prog" id="prog"><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section class="sec" id="services">
+  <div class="top rv"><div><span class="kick">Our services</span><h2>Icons, ready<br>for <em>Dubai.</em></h2></div><p>From a Rolls-Royce with chauffeur to the Bugatti Centodieci, our most requested cars are prepared and delivered to you.</p></div>
+  <div class="services">
+    <a class="svc rv" href="https://srt-car.com/en/shop"><img src="assets/services/rolls-royce.jpg" alt="Rolls Royce" loading="lazy" decoding="async"><div><h3>Rolls Royce</h3><span>→</span></div></a>
+    <a class="svc rv" href="https://srt-car.com/en/shop"><img src="assets/services/bugatti-centodieci.jpg" alt="Bugatti Centodieci" loading="lazy" decoding="async"><div><h3>Bugatti Centodieci</h3><span>→</span></div></a>
+    <a class="svc rv" href="https://srt-car.com/en/shop"><img src="assets/services/mercedes-amg-g-63.jpg" alt="Mercedes-AMG G 63" loading="lazy" decoding="async"><div><h3>Mercedes-AMG G 63</h3><span>→</span></div></a>
+    <a class="svc rv" href="https://srt-car.com/en/shop"><img src="assets/services/ferrari-f8-spider.jpg" alt="Ferrari F8 Spider" loading="lazy" decoding="async"><div><h3>Ferrari F8 Spider</h3><span>→</span></div></a>
+  </div>
+</section>
+
+<section class="sec" id="fleet" style="padding-top:0">
+  <div class="top rv"><div><span class="kick">Latest offers</span><h2>Rental cars</h2></div>
+    <div class="filters" id="filters"><button class="on" data-f="all">All</button><button data-f="Luxury">Luxury</button><button data-f="Sport">Sport</button><button data-f="SUV">SUV</button><button data-f="Sedan">Sedan</button></div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="more"><button class="btn g" id="more">Show all cars</button></div>
+</section>
+
+<section class="sec" id="brands" style="padding-top:0">
+  <div class="top rv"><div><span class="kick">Find cars by brands</span><h2>30 brands,<br>one garage.</h2></div><p>Pick a brand to see every model available for rent today.</p></div>
+  <div class="brands" id="brandGrid"></div>
+</section>
+
+<div class="join rv" id="join">
+  <div class="tx">
+    <span class="kick">SRT family</span>
+    <h2>Join the SRT family &amp; get <em>20% off</em> your next ride.</h2>
+    <p style="color:var(--muted);margin-bottom:22px;line-height:1.6">Use the same email address when you register to get the discount.</p>
+    <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Subscribed ✓'"><input type="email" placeholder="Your email address" required><button class="btn w">Subscribe</button></form>
+  </div>
+  <div class="im" role="img" aria-label="SRT Rent a Car"></div>
+</div>
+
+<section class="sec" id="news">
+  <div class="top rv"><div><span class="kick">Our news</span><h2>From the blog</h2></div><a class="btn g" href="https://srt-car.com/en/blog">All articles</a></div>
+  <div class="news">
+    <a class="post rv" href="https://srt-car.com/en/post/6"><div class="im"><img src="assets/news/post-1.png" alt="" loading="lazy" decoding="async"></div><div class="tx"><small>Cars</small><h4>The Road Ahead: Emerging Car Technologies That Will Change Our World</h4><p>In the ever-evolving world of automotive technology, innovation knows no bounds. Cars are no longer just modes of transport…</p></div></a>
+    <a class="post rv" href="https://srt-car.com/en/post/5"><div class="im"><img src="assets/news/post-2.png" alt="" loading="lazy" decoding="async"></div><div class="tx"><small>Car Maintenance</small><h4>The Evolution of Car Design: Blending Form and Function</h4><p>Cars have long been more than just a means of transportation. They are a reflection of our society's values, technologic…</p></div></a>
+    <a class="post rv" href="https://srt-car.com/en/post/4"><div class="im"><img src="assets/news/post-3.png" alt="" loading="lazy" decoding="async"></div><div class="tx"><small>Cars</small><h4>Revving Up for the Future: The Ever-Evolving World of Cars</h4><p>The world of cars has come a long way since the invention of the first automobile. From the Model T to electric vehicles…</p></div></a>
+  </div>
+</section>
+
+<section class="sec" id="contact" style="padding-top:0">
+  <div class="top rv"><div><span class="kick">Contact</span><h2>Need to rent<br>a <em>luxury car?</em></h2></div><p>Tell us what you need and we'll contact you as soon as possible.</p></div>
+  <div class="contact">
+    <div class="card rv">
+      <h3>SRT Rent a Car</h3>
+      <a class="ln" href="https://wa.me/971509070094"><span>WhatsApp</span>+971 50 907 0094</a>
+      <a class="ln" href="mailto:info@srt-car.com"><span>Email</span>info@srt-car.com</a>
+      <a class="ln" href="https://www.instagram.com/srt.car.rent"><span>Instagram</span>@srt.car.rent</a>
+      <a class="ln" href="https://www.facebook.com/srt.car.rent/"><span>Facebook</span>srt.car.rent</a>
+      <a class="ln" href="https://apps.apple.com/ae/app/srt-rent-a-car/id6478675426"><span>Mobile app</span>App Store ↗</a>
+    </div>
+    <div class="map rv" id="map"></div>
+  </div>
+</section>
+
+<footer>
+  <img src="assets/logo.webp" alt="SRT Rent a Car" style="height:40px;width:auto" loading="lazy">
+  <div class="links"><a href="#top">Home</a><a href="#fleet">Rental Cars</a><a href="https://srt-car.com/en/shop">Cars For Sale</a><a href="https://srt-car.com/en/lottery">Lottery</a><a href="https://srt-car.com/en/blog">Blog</a><a href="#contact">Contact</a><a href="https://srt-car.com/site/terms%20and%20policy.pdf">Terms &amp; Policy</a><a href="https://srt-car.com/privacy-policy">Privacy Policy for Mobile App</a></div>
+  <span>© 2026 SRT RENT A CAR. All Rights Reserved.</span>
+</footer>
+
+<script>
+  // Fleet data from srt-car.com/en: [id, name, photo, AED/day, AED/week, deposit, category]
+  const FLEET=[
+    [25,"Ferrari F8 Spider","ferrari-f8-spider",3500,24500,2500,"Sport"],
+    [197,"Rolls-Royce Phantom","rolls-royce-phantom",3500,23000,2500,"Luxury"],
+    [196,"Rolls-Royce Spectre","rolls-royce-spectre",3999,26600,2500,"Luxury"],
+    [195,"Rolls-Royce Ghost","rolls-royce-ghost",3200,22000,2500,"Luxury"],
+    [194,"Rolls-Royce Cullinan","rolls-royce-cullinan",4199,29000,2500,"Luxury"],
+    [189,"Lamborghini Urus Kayvani","lamborghini-urus-kayvani",6000,42000,1500,"Sport"],
+    [45,"Audi R8 V10","audi-r8-v10",1700,11900,2000,"Sport"],
+    [190,"Porsche 718 Boxster Style Edition","porsche-718-boxster-style-edition",1500,10500,1500,"Sport"],
+    [79,"BMW i8 Roadster","bmw-i8-roadster",1200,6500,2500,"Sport"],
+    [191,"Range Rover Vogue","range-rover-vogue",1800,12500,1500,"SUV"],
+    [193,"Range Rover Vogue Autobiography","range-rover-vogue-autobiography",1000,7000,1500,"SUV"],
+    [192,"Land Rover Defender 90 V8","land-rover-defender-90-v8",1300,9100,1500,"SUV"],
+    [17,"BMW X6 M Competition","bmw-x6-m-competition",1500,10500,1500,"SUV"],
+    [147,"Mercedes-Benz GLS 450","mercedes-benz-gls450",1200,8400,1500,"SUV"],
+    [28,"Mercedes-Benz GLE 350","mercedes-benz-gle350",1000,7000,1500,"SUV"],
+    [178,"Hyundai Palisade","hyundai-palisade",300,2100,1000,"SUV"],
+    [180,"Hyundai Tucson","hyundai-tucson",200,1400,1000,"SUV"],
+    [71,"Mercedes-Benz C300","mercedes-benz-c300",600,4200,1500,"Sedan"],
+    [182,"Genesis G80 Sport","genesis-g80-sport",500,3500,1000,"Sedan"],
+    [167,"Genesis G70","genesis-g70",500,3500,1000,"Sedan"],
+    [169,"Mercedes-Benz CLA250","mercedes-benz-cla250",500,3500,1000,"Sedan"],
+    [146,"Mercedes-Benz A220","mercedes-benz-a220",500,3500,1500,"Sedan"],
+    [26,"Mercedes-Benz A250","mercedes-benz-a250",350,2450,1500,"Sedan"],
+    [177,"Kia Stinger","kia-stinger",300,2100,1000,"Sedan"],
+    [176,"Kia K5","kia-k5",200,1400,1000,"Sedan"],
+    [179,"Hyundai Sonata","hyundai-sonata",180,1260,1000,"Sedan"]];
+  const n=v=>v.toLocaleString('en-US');
+  const grid=document.getElementById('grid');
+  grid.innerHTML=FLEET.map(c=>`<article class="car" data-c="${c[6]}">
+    <div class="ph"><img src="assets/cars/${c[2]}.jpg" alt="${c[1]}" width="612" height="408" loading="lazy" decoding="async"><em>For Rent</em></div>
+    <div class="bd"><h4>${c[1]}</h4>
+      <div class="meta"><span>250 km/day</span><span>24/7 Service</span><span>Free Delivery</span><span>Deposit ${n(c[5])} AED</span></div>
+      <div class="row"><div class="d"><b>AED ${n(c[3])}</b><small>/ day · AED ${n(c[4])} / week</small></div><a href="https://srt-car.com/en/car/${c[0]}">Book</a></div>
+    </div></article>`).join('');
+  let filter='all',showAll=false;
+  function applyFilter(){let shown=0;
+    grid.querySelectorAll('.car').forEach(el=>{const ok=filter==='all'||el.dataset.c===filter;
+      const vis=ok&&(showAll||filter!=='all'||shown<8);el.classList.toggle('hide',!vis);if(vis)shown++});
+    document.getElementById('more').style.display=(filter==='all'&&!showAll)?'':'none'}
+  document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    document.querySelector('#filters .on').classList.remove('on');b.classList.add('on');filter=b.dataset.f;applyFilter()});
+  document.getElementById('more').onclick=()=>{showAll=true;applyFilter()};
+  applyFilter();
+
+  const BRAND_ID={"volkswagen":8,"volvo":9,"bmw":10,"renault":11,"mazda":13,"chevrolet":17,"nissan":22,"lamborghini":23,"mclaren":24,"rolls-royce":25,"bentley":26,"land-rover":27,"mercedes-benz":28,"bugatti":30,"hyundai":31,"mini":32,"cadillac":33,"ferrari":35,"genesis":36,"kia":38,"maserati":39,"porsche":40,"toyota":41,"lexus":42,"audi":43,"gmc":44,"ford":45,"peugeot":46,"pagani":47,"aston-martin":48};
+  const BR=["rolls-royce","bugatti","ferrari","lamborghini","mclaren","pagani","bentley","aston-martin","porsche","mercedes-benz","bmw","audi","land-rover","maserati","lexus","genesis","cadillac","gmc","chevrolet","ford","toyota","nissan","hyundai","kia","mazda","volkswagen","volvo","mini","peugeot","renault"];
+  document.getElementById('brandGrid').innerHTML=BR.map(b=>`<a href="https://srt-car.com/en/shop?brand=${BRAND_ID[b]}" title="${b.replace(/-/g,' ')}"><img src="assets/brands/${b}.png" alt="${b.replace(/-/g,' ')}" loading="lazy" decoding="async"></a>`).join('');
+
+  // Reveal on scroll + lazy map (the iframe is heavy, so it only loads near the viewport)
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -10% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  const mo=new IntersectionObserver(es=>{if(es[0].isIntersecting){document.getElementById('map').innerHTML='<iframe title="SRT location" loading="lazy" src="https://www.google.com/maps?q=25.255215,55.3402377&z=13&output=embed"></iframe>';mo.disconnect()}},{rootMargin:'400px'});
+  mo.observe(document.getElementById('map'));
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+/* ---------- Smooth scroll ---------- */
+const lenis=window.Lenis&&!matchMedia('(prefers-reduced-motion: reduce)').matches?new Lenis({lerp:.085,smoothWheel:true}):null;
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(!t)return;
+  e.preventDefault();lenis?lenis.scrollTo(t,{offset:0,duration:1.6}):t.scrollIntoView({behavior:'smooth'})}));
+
+/* ---------- Renderer ---------- */
+const canvas=document.getElementById('c');
+const mobile=matchMedia('(max-width:760px)').matches;
+let dpr=Math.min(devicePixelRatio,mobile?1.5:1.75);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(dpr);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x030303);
+scene.fog=new THREE.Fog(0x030303,14,42);
+const camera=new THREE.PerspectiveCamera(30,1,.1,120);
+
+/* ---------- Studio environment: soft boxes baked once into a PMREM map ----------
+   The long light strips are what give the paint those crisp, glossy reflections. */
+{
+  const env=new THREE.Scene();
+  env.background=new THREE.Color(0x000000);
+  const box=(w,h,x,y,z,rx,ry,i)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(i,i,i),side:THREE.DoubleSide}));
+    m.position.set(x,y,z);m.rotation.set(rx,ry,0);env.add(m)};
+  box(14,2.2,0,9,0,Math.PI/2,0,5);            // long top strip
+  box(3,3,0,9,-6,Math.PI/2,0,3);              // front overhead
+  box(10,1.4,-9,3,0,0,Math.PI/2,2.2);         // left strip
+  box(10,1.4,9,3,0,0,-Math.PI/2,2.2);         // right strip
+  box(8,4,0,2.5,12,0,Math.PI,1.2);            // rear fill
+  box(40,40,0,-2,0,Math.PI/2,0,.04);          // faint floor bounce
+  const pm=new THREE.PMREMGenerator(renderer);
+  scene.environment=pm.fromScene(env,.02).texture; pm.dispose();
+}
+
+/* ---------- Floor: dark wet asphalt with puddles that show the mirrored car ---------- */
+function canvasTex(size,draw,repeat=1){const c=document.createElement('canvas');c.width=c.height=size;draw(c.getContext('2d'),size);
+  const t=new THREE.CanvasTexture(c);if(repeat!==1){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat)}return t}
+// Puddle alpha: smooth value noise, darker = more reflective water
+const puddleTex=canvasTex(256,(x,s)=>{const G=8,g=[];for(let i=0;i<(G+1)*(G+1);i++)g.push(Math.random());
+  const at=(i,j)=>g[(j%G)*(G+1)+(i%G)],sm=t=>t*t*(3-2*t),d=x.createImageData(s,s);
+  for(let y=0;y<s;y++)for(let X=0;X<s;X++){const u=X/s*G,v=y/s*G,i=Math.floor(u),j=Math.floor(v),fu=sm(u-i),fv=sm(v-j);
+    const n=(at(i,j)*(1-fu)+at(i+1,j)*fu)*(1-fv)+(at(i,j+1)*(1-fu)+at(i+1,j+1)*fu)*fv;
+    const a=255*(.97-.3*Math.min(1,Math.max(0,(n-.45)/.3)));const k=(y*s+X)*4;d.data[k]=d.data[k+1]=d.data[k+2]=a;d.data[k+3]=255}
+  x.putImageData(d,0,0)},6);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:0x050505,roughness:.5,metalness:0,envMapIntensity:.25,transparent:true,alphaMap:puddleTex,opacity:1}));
+floor.rotation.x=-Math.PI/2;floor.renderOrder=1;scene.add(floor);
+// Spot of light on the floor, like a car under a single overhead lamp
+const pool=new THREE.Mesh(new THREE.PlaneGeometry(16,16),new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+  map:canvasTex(256,(x,s)=>{const g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);g.addColorStop(0,'rgba(255,255,255,.16)');g.addColorStop(.5,'rgba(255,255,255,.05)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,s,s)})}));
+pool.rotation.x=-Math.PI/2;pool.position.y=.004;pool.renderOrder=2;scene.add(pool);
+
+/* ---------- Lights ---------- */
+scene.add(new THREE.HemisphereLight(0xffffff,0x000000,.15));
+const key=new THREE.DirectionalLight(0xffffff,1.1);key.position.set(2,8,-3);scene.add(key);
+const rim=new THREE.DirectionalLight(0xcfd8ff,.9);rim.position.set(-6,3,6);scene.add(rim);
+
+/* ---------- Car ---------- */
+const rig=new THREE.Group();scene.add(rig);           // real car
+const mirrorRig=new THREE.Group();mirrorRig.scale.y=-1;scene.add(mirrorRig); // reflection seen through the puddles
+const paint=new THREE.MeshPhysicalMaterial({color:0xf5c400,metalness:.45,roughness:.3,clearcoat:1,clearcoatRoughness:.025,envMapIntensity:1.25});
+const rimMat=new THREE.MeshStandardMaterial({color:0x2a2a2a,metalness:1,roughness:.22,envMapIntensity:1.4});
+const trimMat=new THREE.MeshStandardMaterial({color:0x0c0c0c,metalness:.5,roughness:.35});
+const glassMat=new THREE.MeshPhysicalMaterial({color:0x0a0a0a,metalness:.2,roughness:.02,transparent:true,opacity:.55,envMapIntensity:1.5});
+let wheels=[],mirrorWheels=[];
+
+const manager=new THREE.LoadingManager();
+manager.onProgress=(u,l,t)=>{const p=Math.round(l/t*100);document.getElementById('lbar').style.width=p+'%';document.getElementById('lpct').textContent=p+'%'};
+const draco=new DRACOLoader(manager);draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');
+const loader=new GLTFLoader(manager);loader.setDRACOLoader(draco);
+const glbProgress=e=>{if(e.total){const p=Math.round(e.loaded/e.total*100);document.getElementById('lbar').style.width=p+'%';document.getElementById('lpct').textContent=p+'%'}};
+
+loader.load('https://threejs.org/examples/models/gltf/ferrari.glb',g=>{
+  const m=g.scene.children[0];
+  m.getObjectByName('body').material=paint;
+  ['rim_fl','rim_fr','rim_rr','rim_rl'].forEach(k=>m.getObjectByName(k).material=rimMat);
+  m.getObjectByName('trim').material=trimMat;
+  m.getObjectByName('glass').material=glassMat;
+  const ao=new THREE.TextureLoader(manager).load('https://threejs.org/examples/models/gltf/ferrari_ao.png');
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(.655*4,1.3*4),new THREE.MeshBasicMaterial({map:ao,blending:THREE.MultiplyBlending,toneMapped:false,transparent:true,depthWrite:false}));
+  shadow.rotation.x=-Math.PI/2;shadow.position.y=.006;shadow.renderOrder=3;
+  const mc=m.clone();                                  // shares geometry & materials, no extra memory
+  rig.add(m);mirrorRig.add(mc);rig.add(shadow);
+  [-.68,.68].forEach(x=>glow(0xfff6e8,.5,x,.53,-2.0,mirrorRig));
+  wheels=['wheel_fl','wheel_fr','wheel_rl','wheel_rr'].map(k=>m.getObjectByName(k));
+  mirrorWheels=['wheel_fl','wheel_fr','wheel_rl','wheel_rr'].map(k=>mc.getObjectByName(k));
+  ready();
+},glbProgress,()=>{ // offline fallback: simple body so the page still works
+  const b=new THREE.Mesh(new THREE.BoxGeometry(1.9,.8,4.4),paint);b.position.y=.6;rig.add(b);mirrorRig.add(b.clone());ready()});
+
+/* Head / tail lights: additive glow sprites + light cones */
+const glowTex=canvasTex(128,(x,s)=>{const g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);g.addColorStop(0,'#fff');g.addColorStop(.2,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,s,s)});
+function glow(color,size,x,y,z,parent=rig){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));
+  s.scale.set(size,size,1);s.position.set(x,y,z);parent.add(s);return s}
+const heads=[-.68,.68].map(x=>glow(0xfff6e8,.42,x,.53,-2.0));
+const tails=[-.6,.6].map(x=>glow(0xff2a1a,.32,x,.78,2.14));
+// Volumetric-looking headlight beams
+const beamTex=canvasTex(64,(x,s)=>{const g=x.createLinearGradient(0,0,0,s);g.addColorStop(0,'rgba(255,255,255,.22)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,s,s)});
+const beams=[-.68,.68].map(x=>{const c=new THREE.Mesh(new THREE.ConeGeometry(1.6,9,24,1,true),new THREE.MeshBasicMaterial({map:beamTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,color:0xfff2dd}));
+  c.geometry.translate(0,-4.5,0);c.rotation.x=-Math.PI/2+.06;c.position.set(x,.53,-2.05);rig.add(c);return c});
+// Light pools the headlights throw on the road
+const headPool=new THREE.Mesh(new THREE.PlaneGeometry(5,9),new THREE.MeshBasicMaterial({map:pool.material.map,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,color:0xfff2dd,opacity:1.6}));
+headPool.rotation.x=-Math.PI/2;headPool.position.set(0,.005,-6.5);headPool.renderOrder=2;rig.add(headPool);
+const tailPool=new THREE.Mesh(new THREE.PlaneGeometry(4,3),new THREE.MeshBasicMaterial({map:pool.material.map,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,color:0xff2010,opacity:0}));
+tailPool.rotation.x=-Math.PI/2;tailPool.position.set(0,.005,3);tailPool.renderOrder=2;rig.add(tailPool);
+
+/* Smoke for the burnout chapter: a fixed pool of sprites, recycled */
+const smokeTex=canvasTex(128,(x,s)=>{for(let i=0;i<16;i++){const px=36+Math.random()*56,py=36+Math.random()*56,r=18+Math.random()*30;
+  const g=x.createRadialGradient(px,py,0,px,py,r);g.addColorStop(0,'rgba(255,255,255,.28)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,s,s)}});
+const smoke=[];for(let i=0;i<(mobile?36:60);i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:smokeTex,color:0x9a9a9a,transparent:true,depthWrite:false,opacity:0}));
+  sp.userData={life:1,v:new THREE.Vector3(),s:1};sp.visible=false;scene.add(sp);smoke.push(sp)}
+function emitSmoke(){const sp=smoke.find(p=>p.userData.life>=1);if(!sp)return;const side=Math.random()<.5?-1:1;
+  sp.position.set(side*.85,.25,1.4);sp.userData.life=0;sp.userData.v.set(side*(.3+Math.random()*.6),.25+Math.random()*.35,1+Math.random()*1.6);
+  sp.userData.s=.7+Math.random()*.6;sp.material.rotation=Math.random()*6;sp.visible=true}
+
+/* Dust in the light */
+const DN=mobile?250:450,dp=new Float32Array(DN*3);for(let i=0;i<DN;i++)dp.set([(Math.random()-.5)*24,Math.random()*5,(Math.random()-.5)*24],i*3);
+const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xffffff,size:.018,transparent:true,opacity:.4,depthWrite:false}));scene.add(dust);
+
+/* ---------- Scroll-driven camera ----------
+   Keyframes in polar coordinates around the car (theta: 0 = front, PI/2 = right side, PI = rear),
+   so interpolation always arcs around the car instead of cutting through it. */
+const K=[
+  {p:0,   th:.62, r:10.4,h:1.05,look:[0,.5,0],  fov:30},
+  {p:.22, th:1.57,r:10.2,h:1.2, look:[0,.55,1.0], fov:30},
+  {p:.44, th:2.05,r:4.6, h:.55, look:[.9,.4,.4],fov:34},
+  {p:.64, th:3.14,r:7.6, h:1.25,look:[0,.6,0],  fov:30},
+  {p:.82, th:4.3, r:9.5, h:5.2, look:[0,.2,0],  fov:32},
+  {p:1,   th:5.72,r:8.8, h:1.0, look:[0,.55,0], fov:30}];
+const ss=t=>t*t*(3-2*t);
+const cam={th:0,r:0,h:0,look:new THREE.Vector3(),fov:30};
+function sample(p){let i=0;while(i<K.length-2&&p>K[i+1].p)i++;const a=K[i],b=K[i+1],t=ss(Math.min(1,Math.max(0,(p-a.p)/(b.p-a.p))));
+  cam.th=a.th+(b.th-a.th)*t;cam.r=a.r+(b.r-a.r)*t;cam.h=a.h+(b.h-a.h)*t;cam.fov=a.fov+(b.fov-a.fov)*t;
+  cam.look.set(a.look[0]+(b.look[0]-a.look[0])*t,a.look[1]+(b.look[1]-a.look[1])*t,a.look[2]+(b.look[2]-a.look[2])*t)}
+
+const story=document.querySelector('.story');
+const chaps=[...document.querySelectorAll('.chap')].map(el=>({el,a:+el.dataset.in,b:+el.dataset.out}));
+const dots=[...document.querySelectorAll('#prog i')];
+let target=0,prog=0,lastProg=-1,intro=0,introDone=false,started=false,visible=true,mouse=0,mx=0,wheelRot=0;
+function readScroll(){const r=story.getBoundingClientRect();target=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)))}
+addEventListener('scroll',readScroll,{passive:true});
+addEventListener('pointermove',e=>{mouse=e.clientX/innerWidth-.5},{passive:true});
+new IntersectionObserver(es=>{visible=es[0].isIntersecting},{rootMargin:'100px'}).observe(story);
+
+function updateUI(p){
+  chaps.forEach(c=>{const f=.035;let o=p<c.a-f||p>c.b+f?0:Math.min(1,(p-(c.a-f))/f,(c.b+f-p)/f);
+    if(c.a===0)o=p>c.b+f?0:Math.min(1,(c.b+f-p)/f);
+    if(c.a===0&&!introDone)o*=Math.max(0,(intro-.55)/.45);
+    if(c.el._o!==o){c.el._o=o;c.el.style.opacity=o;c.el.style.transform=`translateY(${(1-o)*24}px)`;c.el.style.visibility=o?'visible':'hidden'}});
+  const di=Math.min(4,Math.floor(p*5));dots.forEach((d,i)=>d.classList.toggle('on',i===di));
+}
+
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;
+  camera.setViewOffset(w,h,0,w>760?0:h*.06,w,h);camera.updateProjectionMatrix();lastProg=-1}
+addEventListener('resize',resize);resize();
+
+/* Auto-lower resolution if the device struggles (keeps scrolling fluid) */
+let frames=0,acc=0;
+function adapt(dt){if(dpr<=1)return;frames++;acc+=dt;if(frames===40){if(acc/frames>1/42){dpr=Math.max(1,dpr-.5);renderer.setPixelRatio(dpr);resize()}frames=0;acc=0}}
+
+function ready(){
+  document.getElementById('loader').classList.add('done');
+  started=true;readScroll();
+}
+
+/* ---------- Main loop: renders only while the 3D stage is on screen ---------- */
+const clock=new THREE.Clock();let smokeAcc=0,smokeAlive=0;
+function frame(time){
+  lenis&&lenis.raf(time);
+  const dt=Math.min(clock.getDelta(),.05);
+  if(!started||!visible){requestAnimationFrame(frame);return}
+  // intro: car drives out of the dark when the page opens
+  if(!introDone){intro=Math.min(1,intro+dt/3.2);if(intro>=1)introDone=true}
+  const e=1-Math.pow(1-intro,3);
+  rig.position.z=mirrorRig.position.z=(1-e)*34;
+  const prev=prog;prog+=(target-prog)*Math.min(1,dt*7);                 // damped scroll
+  if(Math.abs(target-prog)<1e-5)prog=target;
+  const dprog=prog-prev;
+  mx+=(mouse-mx)*Math.min(1,dt*3);
+
+  sample(prog);
+  if(camera.aspect<1)cam.look.z*=.3;
+  const th=cam.th+mx*.12;
+  camera.position.set(Math.sin(th)*cam.r,cam.h,-Math.cos(th)*cam.r);
+  // portrait screens: widen the lens so the whole car stays in frame
+  const fov=cam.fov*(camera.aspect<1?Math.min(1.9,.85/camera.aspect):1);
+  if(camera.fov!==fov){camera.fov=fov;camera.updateProjectionMatrix()}
+  camera.lookAt(cam.look);
+
+  // wheels: spin during the intro and with scroll speed
+  wheelRot-= (1-e)*dt*28 + dprog*40;
+  wheels.forEach(w=>w.rotation.x=wheelRot);mirrorWheels.forEach(w=>w.rotation.x=wheelRot);
+
+  // burnout window around the rear view
+  const burn=Math.max(0,1-Math.abs(prog-.64)/.09);
+  const rev=burn*(.6+.4*Math.sin(time*.012));
+  tails.forEach(s=>{s.scale.setScalar(.32+rev*.22);s.material.opacity=.75+rev*.25});
+  tailPool.material.opacity=.4+rev*1.6;
+  rig.position.x=burn?Math.sin(time*.045)*.006*burn:0;
+  smokeAcc+=burn*dt*(mobile?40:65);while(smokeAcc>1){emitSmoke();smokeAcc--}
+  smokeAlive=0;
+  for(const sp of smoke){const u=sp.userData;if(u.life>=1)continue;smokeAlive++;
+    u.life+=dt/3;sp.position.addScaledVector(u.v,dt);u.v.multiplyScalar(.985);
+    const sz=u.s+u.life*6;sp.scale.set(sz,sz,1);sp.material.opacity=Math.sin(Math.min(1,u.life)*Math.PI)*.5;sp.material.rotation+=dt*.25;
+    if(u.life>=1)sp.visible=false}
+
+  updateUI(prog);
+  // skip the GPU work when nothing moves (reading the page costs nothing)
+  const busy=!introDone||Math.abs(dprog)>1e-6||smokeAlive>0||burn>0||Math.abs(mouse-mx)>1e-4||lastProg<0;
+  lastProg=prog;
+  if(busy)renderer.render(scene,camera);
+  adapt(dt);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__seek=p=>{target=prog=p;intro=1;introDone=true;lastProg=-1};
+</script>
 </body>
 </html>
