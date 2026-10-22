@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRT · Fleet Carousel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#f7f1e6;--cream2:#efe5d2;--red:#e63946;--navy:#1d3557;--mint:#a8dadc;--sun:#ffb703;--ink:#14213d}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--cream);color:var(--ink);font-family:Archivo,sans-serif;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .bl{font-family:"Archivo Black",sans-serif;text-transform:uppercase;letter-spacing:-.01em}
+
+  nav{position:absolute;inset:0 0 auto;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:22px 4vw}
+  .logo{font-family:"Archivo Black";font-size:26px;display:flex;align-items:center;gap:10px}
+  .logo span{background:var(--red);color:#fff;padding:2px 10px;border-radius:8px;transform:rotate(-4deg);display:inline-block}
+  .l{display:flex;gap:6px}
+  .l a{padding:10px 16px;border-radius:99px;font-weight:700;font-size:14px}
+  .l a:hover{background:var(--ink);color:var(--cream)}
+  .chunky{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:14px;background:var(--red);color:#fff;font:700 15px Archivo;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transition:.15s;cursor:pointer}
+  .chunky:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .chunky:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .chunky.w{background:#fff;color:var(--ink)}
+  .chunky.y{background:var(--sun);color:var(--ink)}
+
+  .hero{position:relative;height:100vh;min-height:720px;overflow:hidden;background:linear-gradient(180deg,#bfe3e4 0%,#f7f1e6 62%)}
+  #c{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
+  .info{position:absolute;left:4vw;top:22vh;z-index:3;width:min(380px,90vw);background:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:8px 8px 0 var(--ink);padding:26px}
+  .info .cat{display:inline-block;background:var(--mint);border:2px solid var(--ink);border-radius:99px;padding:4px 12px;font-weight:700;font-size:12px;letter-spacing:.08em}
+  .info h1{font-family:"Archivo Black";font-size:38px;line-height:.95;margin:14px 0 6px;text-transform:uppercase}
+  .info .sub{color:#5b6475;font-size:14px}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0}
+  .facts div{background:var(--cream);border-radius:12px;padding:10px;text-align:center;font-size:11px;font-weight:700;color:#5b6475}
+  .facts b{display:block;font-family:"Archivo Black";font-size:17px;color:var(--ink)}
+  .pr{display:flex;align-items:end;justify-content:space-between}
+  .pr b{font-family:"Archivo Black";font-size:46px;line-height:1;color:var(--red)}
+  .pr small{font-weight:700;font-size:13px}
+  .fade{animation:fd .45s}
+  @keyframes fd{from{opacity:0;transform:translateY(10px)}}
+
+  .arrows{position:absolute;right:4vw;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;gap:12px}
+  .arrows button{width:58px;height:58px;border-radius:50%;font-size:22px;justify-content:center;padding:0}
+  .dots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:3;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:92vw}
+  .dots button{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:8px 14px;font:700 13px Archivo;cursor:pointer}
+  .dots button.on{background:var(--ink);color:#fff}
+  .headline{position:absolute;right:4vw;top:16vh;z-index:2;text-align:right;pointer-events:none}
+  .headline h2{font-family:"Archivo Black";font-size:clamp(40px,6vw,96px);line-height:.88;text-transform:uppercase;color:var(--ink)}
+  .headline h2 em{font-style:normal;color:var(--red)}
+  .hint{position:absolute;left:50%;top:15vh;transform:translateX(-50%);z-index:2;font-weight:700;font-size:13px;background:#fff;border:2px solid var(--ink);padding:6px 14px;border-radius:99px;display:none}
+
+  .bar{background:var(--ink);color:var(--cream);overflow:hidden;padding:18px 0;transform:rotate(-1.5deg);margin:-12px -10px 0;position:relative;z-index:4}
+  .bar div{display:flex;gap:40px;width:max-content;animation:mq 30s linear infinite;font-family:"Archivo Black";font-size:26px;text-transform:uppercase}
+  .bar span:nth-child(3n){color:var(--sun)}
+  @keyframes mq{to{transform:translateX(-50%)}}
+
+  section{padding:110px 4vw}
+  .t{font-family:"Archivo Black";font-size:clamp(38px,5vw,74px);text-transform:uppercase;line-height:.92;margin-bottom:50px}
+  .t em{font-style:normal;color:var(--red)}
+
+  .search{display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:12px;background:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:8px 8px 0 var(--ink);padding:14px;margin-bottom:110px}
+  .search label{background:var(--cream);border-radius:14px;padding:12px 16px;font-weight:700;font-size:12px;display:flex;flex-direction:column;gap:4px}
+  .search input,.search select{border:0;background:none;font:500 16px Archivo;outline:none}
+
+  .stickers{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .st{border:2px solid var(--ink);border-radius:26px;padding:26px;min-height:300px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:6px 6px 0 var(--ink);transition:.2s;position:relative}
+  .st:hover{transform:rotate(-2deg) translateY(-6px)}
+  .st:nth-child(2):hover{transform:rotate(2deg) translateY(-6px)}
+  .st .em{font-size:64px;line-height:1}
+  .st h3{font-family:"Archivo Black";font-size:26px;text-transform:uppercase;line-height:1}
+  .st p{margin-top:8px;font-weight:500}
+  .st .badge{position:absolute;top:-16px;right:18px;background:var(--sun);border:2px solid var(--ink);padding:6px 12px;border-radius:99px;font-weight:700;font-size:12px;transform:rotate(6deg)}
+
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .how div{background:#fff;border:2px solid var(--ink);border-radius:26px;padding:30px}
+  .how b{font-family:"Archivo Black";font-size:84px;line-height:1;color:var(--cream2);-webkit-text-stroke:2px var(--ink)}
+  .how h4{font-family:"Archivo Black";font-size:22px;text-transform:uppercase;margin:10px 0 8px}
+
+  .app{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:36px;padding:60px;box-shadow:10px 10px 0 var(--ink)}
+  .app h2{font-family:"Archivo Black";font-size:clamp(36px,4.4vw,66px);text-transform:uppercase;line-height:.92}
+  .app form{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+  .app input{flex:1;min-width:200px;border:2px solid var(--ink);border-radius:14px;padding:0 16px;height:52px;font:16px Archivo}
+  .phone{justify-self:center;width:230px;height:430px;border:3px solid var(--ink);border-radius:38px;background:var(--cream);padding:14px;box-shadow:8px 8px 0 var(--ink);transform:rotate(5deg);color:var(--ink);display:flex;flex-direction:column;gap:10px}
+  .phone .s{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:12px;font-weight:700;font-size:13px}
+  .phone .s b{font-family:"Archivo Black";color:var(--red);font-size:20px;display:block}
+
+  .news{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .post{background:#fff;border:2px solid var(--ink);border-radius:26px;overflow:hidden;transition:.2s}
+  .post:hover{box-shadow:6px 6px 0 var(--ink);transform:translate(-3px,-3px)}
+  .post .im{height:170px;border-bottom:2px solid var(--ink)}
+  .post div.tx{padding:22px}
+  .post h5{font-family:"Archivo Black";font-size:19px;text-transform:uppercase;line-height:1.05}
+  .post small{font-weight:700;font-size:12px;color:#5b6475}
+
+  footer{background:var(--ink);color:var(--cream);padding:70px 4vw 30px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;line-height:2}
+  footer h6{font-family:"Archivo Black";color:var(--sun);font-size:14px;text-transform:uppercase}
+
+  @media(max-width:950px){
+    .l{display:none}
+    .info{top:auto;bottom:90px;left:5vw;padding:18px}
+    .info h1{font-size:28px}.facts{display:none}
+    .headline{top:12vh;left:5vw;right:5vw;text-align:left}
+    .arrows{top:auto;bottom:100px;transform:none;flex-direction:row}
+    .dots{display:none}
+    .search,.stickers,.how,.app,.news,footer{grid-template-columns:1fr}
+    .phone{display:none}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="#"><span>SRT</span>rent a car</a>
+  <div class="l"><a href="#fleet">Rental Cars</a><a href="#">Brands</a><a href="#">Cars for Sale</a><a href="#">Lottery</a><a href="#">Activities</a><a href="#news">Blog</a></div>
+  <a class="chunky w" href="https://wa.me/971509070094">💬 WhatsApp</a>
+</nav>
+
+<header class="hero" id="fleet">
+  <canvas id="c"></canvas>
+  <div class="headline"><h2>Spin the<br><em>garage.</em></h2></div>
+  <div class="info" id="info"></div>
+  <div class="arrows"><button class="chunky w" id="prev">←</button><button class="chunky" id="next">→</button></div>
+  <div class="dots" id="dots"></div>
+</header>
+
+<div class="bar"><div id="bar"></div></div>
+
+<section>
+  <form class="search" onsubmit="event.preventDefault()">
+    <label>📍 Pick-up<select><option>Dubai, United Arab Emirates</option><option>Abu Dhabi</option><option>Sharjah</option></select></label>
+    <label>📅 From<input type="date" value="2026-11-02"></label>
+    <label>📅 Until<input type="date" value="2026-11-09"></label>
+    <button class="chunky y">Let's go →</button>
+  </form>
+
+  <h2 class="t">Our <em>services</em></h2>
+  <div class="stickers">
+    <div class="st" style="background:#fff"><span class="badge">Chauffeur</span><span class="em">👑</span><div><h3>Rolls-Royce</h3><p>Phantom, Ghost, Cullinan, Spectre.</p></div></div>
+    <div class="st" style="background:var(--mint)"><span class="badge">1 of 10</span><span class="em">⚡</span><div><h3>Bugatti Centodieci</h3><p>1,600 hp, and a story to tell.</p></div></div>
+    <div class="st" style="background:var(--sun)"><span class="badge">Desert ready</span><span class="em">🏜️</span><div><h3>AMG G 63</h3><p>Square, loud and loved.</p></div></div>
+    <div class="st" style="background:#ffd6d9"><span class="badge">Roof down</span><span class="em">🏎️</span><div><h3>Ferrari F8 Spider</h3><p>Sunset on the Palm, top down.</p></div></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <h2 class="t">Easy as <em>1-2-3</em></h2>
+  <div class="how">
+    <div><b>1</b><h4>Spin & pick</h4><p>Browse 30+ brands, from a 200 AED Tucson to a Rolls-Royce.</p></div>
+    <div><b>2</b><h4>Book in a tap</h4><p>Book on the website, in the app or on WhatsApp, at any hour.</p></div>
+    <div><b>3</b><h4>We bring it</h4><p>Free delivery to your hotel, home or the airport.</p></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="app">
+    <div><h2>Join the family.<br>Get 20% off.</h2><p style="margin-top:16px;font-weight:500">Subscribe, then register with the same email. The SRT app is also on the App Store.</p>
+      <form onsubmit="event.preventDefault()"><input placeholder="hello@email.com"><button class="chunky y">Claim −20%</button></form></div>
+    <div class="phone"><div style="font-family:'Archivo Black';font-size:18px">SRT 🚗</div><div class="s">Range Rover Vogue<b>1,800 AED</b>per day</div><div class="s">Kia Carnival<b>450 AED</b>per day</div><div class="s" style="background:var(--sun)">Your code<b style="color:var(--ink)">SRT-20</b></div></div>
+  </div>
+</section>
+
+<section id="news" style="padding-top:0">
+  <h2 class="t">Our <em>news</em></h2>
+  <div class="news">
+    <article class="post"><div class="im" style="background:var(--mint)"></div><div class="tx"><small>TECH</small><h5>The Road Ahead: Emerging Car Technologies That Will Change Our World</h5></div></article>
+    <article class="post"><div class="im" style="background:var(--sun)"></div><div class="tx"><small>DESIGN</small><h5>The Evolution of Car Design: Blending Form and Function</h5></div></article>
+    <article class="post"><div class="im" style="background:#ffd6d9"></div><div class="tx"><small>CULTURE</small><h5>Revving Up for the Future: The Ever-Evolving World of Cars</h5></div></article>
+  </div>
+</section>
+
+<footer>
+  <div><a class="logo" href="#"><span>SRT</span>rent a car</a><p style="margin-top:12px;opacity:.7">© 2026 · Terms & Policy · Privacy Policy</p></div>
+  <div><h6>Contact</h6>info@srt-car.com<br>+971 50 907 0094</div>
+  <div><h6>Explore</h6>Rental Cars<br>Cars for Sale<br>Lottery</div>
+  <div><h6>Follow</h6>Instagram<br>Facebook<br>App Store</div>
+</footer>
+
+<script>
+  document.getElementById('bar').innerHTML=Array(2).fill(["Rolls-Royce","★","Lamborghini","Ferrari","★","Bugatti","McLaren","★","Porsche","Bentley","★","Mercedes","Range Rover","★","Genesis"]).flat().map(b=>`<span>${b}</span>`).join('');
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+
+// Fleet shown in the carousel; type picks the low-poly silhouette
+const FLEET=[
+  {name:"Rolls-Royce Phantom",cat:"LUXURY",type:"limo",color:0x1d3557,day:3500,week:23000,dep:2500,seats:4},
+  {name:"Lamborghini Urus Kayvani",cat:"SUPER SUV",type:"suv",color:0xffb703,day:6000,week:42000,dep:1500,seats:4},
+  {name:"Range Rover Vogue",cat:"SUV",type:"suv",color:0xf1faee,day:1800,week:12500,dep:1500,seats:4},
+  {name:"Kia Carnival",cat:"7-SEAT VAN",type:"van",color:0x8d99ae,day:450,week:3150,dep:1500,seats:7},
+  {name:"Mercedes-Benz A250",cat:"SEDAN",type:"sedan",color:0xe63946,day:350,week:2450,dep:1500,seats:4},
+  {name:"Hyundai Tucson",cat:"COMPACT SUV",type:"compact",color:0x2a9d8f,day:200,week:1400,dep:1000,seats:4}];
+
+const P={ // side profile (x forward, y up), cabin profile, width, wheel radius, axle offset
+  limo:{b:[[-2.7,.34],[2.7,.34],[2.78,1.0],[1.7,1.1],[-2.7,1.12]],c:[[-2.0,1.06],[1.15,1.06],[.55,1.66],[-1.7,1.68]],w:2.0,r:.44,ax:1.85},
+  suv:{b:[[-2.4,.4],[2.4,.4],[2.48,1.0],[1.5,1.12],[-2.42,1.16]],c:[[-2.3,1.1],[1.25,1.1],[.6,1.72],[-2.2,1.74]],w:2.0,r:.46,ax:1.55},
+  van:{b:[[-2.5,.36],[2.5,.36],[2.58,.96],[1.9,1.06],[-2.5,1.1]],c:[[-2.45,1.04],[1.75,1.04],[.85,1.9],[-2.4,1.92]],w:1.95,r:.4,ax:1.65},
+  sedan:{b:[[-2.2,.32],[2.2,.32],[2.28,.74],[1.2,.86],[-2.22,.9]],c:[[-1.55,.86],[.95,.86],[.2,1.36],[-1.15,1.38]],w:1.82,r:.36,ax:1.4},
+  compact:{b:[[-2.1,.38],[2.1,.38],[2.18,.95],[1.25,1.04],[-2.12,1.08]],c:[[-2.0,1.02],[1.05,1.02],[.45,1.55],[-1.9,1.57]],w:1.85,r:.4,ax:1.35}};
+
+const tire=new THREE.MeshStandardMaterial({color:0x14213d,roughness:.9,flatShading:true});
+const hub=new THREE.MeshStandardMaterial({color:0xf7f1e6,roughness:.4,metalness:.3});
+const glass=new THREE.MeshStandardMaterial({color:0x14213d,roughness:.1,metalness:.6});
+const lightW=new THREE.MeshBasicMaterial({color:0xfff6d5}), lightR=new THREE.MeshBasicMaterial({color:0xff2d3f});
+const shape=pts=>new THREE.Shape(pts.map(p=>new THREE.Vector2(...p)));
+
+function makeCar(f){
+  const p=P[f.type],g=new THREE.Group(),wheels=[];
+  const paint=new THREE.MeshStandardMaterial({color:f.color,roughness:.35,metalness:.15,flatShading:true});
+  const body=new THREE.Mesh(new THREE.ExtrudeGeometry(shape(p.b),{depth:p.w,bevelSize:.12,bevelThickness:.12,bevelSegments:2}),paint);
+  body.geometry.translate(0,0,-p.w/2);
+  const cab=new THREE.Mesh(new THREE.ExtrudeGeometry(shape(p.c),{depth:p.w*.84,bevelSize:.08,bevelThickness:.08,bevelSegments:2}),glass);
+  cab.geometry.translate(0,0,-p.w*.42);
+  // Roof panel in body colour sits on top of the glasshouse
+  const top=p.c.slice(2), rl=Math.abs(top[0][0]-top[1][0]);
+  const roof=new THREE.Mesh(new THREE.BoxGeometry(rl+.12,.08,p.w*.86),paint);
+  roof.position.set((top[0][0]+top[1][0])/2,Math.max(top[0][1],top[1][1])+.08,0);
+  g.add(body,cab,roof);
+  const L=p.b[1][0];
+  for(const sx of [-1,1])for(const sz of [-1,1]){
+    const w=new THREE.Group();
+    const t=new THREE.Mesh(new THREE.CylinderGeometry(p.r,p.r,.34,14),tire);t.rotation.x=Math.PI/2;
+    const h=new THREE.Mesh(new THREE.CylinderGeometry(p.r*.55,p.r*.55,.36,8),hub);h.rotation.x=Math.PI/2;
+    w.add(t,h);w.position.set(sx*p.ax,p.r,sz*(p.w/2+.05));g.add(w);wheels.push(w);
+    const hl=new THREE.Mesh(new THREE.BoxGeometry(.08,.14,.36),sx>0?lightW:lightR);
+    hl.position.set(sx*(L+.16),p.b[2][1]-.12,sz*(p.w/2-.35));g.add(hl);
+  }
+  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  g.userData.wheels=wheels;
+  return g;
+}
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0xf7f1e6,36,80);
+const camera=new THREE.PerspectiveCamera(34,1,.1,200);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0xe9d8b4,1.6));
+const sun=new THREE.DirectionalLight(0xfff1d6,2.4);sun.position.set(8,16,10);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-14,right:14,top:14,bottom:-14});sun.shadow.radius=4;
+scene.add(sun);
+
+const ground=new THREE.Mesh(new THREE.CircleGeometry(80,64),new THREE.MeshStandardMaterial({color:0xefe5d2,roughness:1}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// Turntable
+const R=7.2, N=FLEET.length;
+const wheel=new THREE.Group();scene.add(wheel);
+const base=new THREE.Mesh(new THREE.CylinderGeometry(R+3,R+3.2,.4,64),new THREE.MeshStandardMaterial({color:0x14213d,roughness:.6}));
+base.position.y=.2;base.receiveShadow=true;wheel.add(base);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(R+3.05,.08,8,96),new THREE.MeshStandardMaterial({color:0xffb703}));
+ring.rotation.x=Math.PI/2;ring.position.y=.42;wheel.add(ring);
+const pods=[],cars=[];
+FLEET.forEach((f,i)=>{
+  const a=i/N*Math.PI*2;
+  const pod=new THREE.Group();pod.position.set(Math.sin(a)*R,.4,Math.cos(a)*R);
+  const disc=new THREE.Mesh(new THREE.CylinderGeometry(3,3,.22,48),new THREE.MeshStandardMaterial({color:i%2?0xf7f1e6:0xa8dadc,roughness:.5}));
+  disc.position.y=.11;disc.receiveShadow=true;pod.add(disc);
+  const car=makeCar(f);car.position.y=.22;car.rotation.y=-Math.PI/5;pod.add(car);
+  wheel.add(pod);pods.push(pod);cars.push(car);
+});
+
+// Low-poly palms around the ring
+function palm(x,z,s){const g=new THREE.Group();
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,3.2,6),new THREE.MeshStandardMaterial({color:0x9c6b3c,flatShading:true}));trunk.position.y=1.6;g.add(trunk);
+  const lm=new THREE.MeshStandardMaterial({color:0x2a9d8f,flatShading:true,side:THREE.DoubleSide});
+  for(let i=0;i<6;i++){const l=new THREE.Mesh(new THREE.ConeGeometry(.35,2.2,4),lm);l.position.y=3.2;l.rotation.set(1.1,i/6*Math.PI*2,0,'YXZ');l.translateY(1);g.add(l)}
+  g.position.set(x,0,z);g.scale.setScalar(s);g.traverse(o=>o.castShadow=true);scene.add(g)}
+[[-14,-6,1.4],[15,-9,1.7],[-18,-16,1.9],[20,2,1.2],[-12,8,1],[11,-20,2.1]].forEach(p=>palm(...p));
+
+// Selection
+let sel=0, target=0;
+const info=document.getElementById('info'),dots=document.getElementById('dots');
+dots.innerHTML=FLEET.map((f,i)=>`<button data-i="${i}">${f.name.split(' ').slice(0,2).join(' ')}</button>`).join('');
+dots.querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+function show(){
+  const f=FLEET[sel];
+  info.innerHTML=`<div class="fade"><span class="cat">${f.cat}</span><h1>${f.name}</h1><div class="sub">24/7 service · Free delivery · 250 km/day</div>
+  <div class="facts"><div><b>${f.seats}</b>seats</div><div><b>${(f.week/1000).toFixed(f.week%1000?2:0).replace(/\.?0+$/,'')}k</b>AED/week</div><div><b>${(f.dep/1000).toFixed(1)}k</b>deposit</div></div>
+  <div class="pr"><div><b>${f.day.toLocaleString()}</b><br><small>AED / day</small></div><a class="chunky" href="https://wa.me/971509070094">Book it →</a></div></div>`;
+  dots.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',i===sel));
+}
+function go(i){sel=(i%N+N)%N;
+  // shortest rotation to bring pod i to the front (+z)
+  let goal=-sel/N*Math.PI*2, d=goal-target; d=Math.atan2(Math.sin(d),Math.cos(d)); target+=d; show()}
+document.getElementById('next').onclick=()=>go(sel+1);
+document.getElementById('prev').onclick=()=>go(sel-1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(sel+1);if(e.key==='ArrowLeft')go(sel-1)});
+// Drag to spin
+let dragX=null,moved=0;
+canvas.addEventListener('pointerdown',e=>{dragX=e.clientX;moved=0});
+addEventListener('pointerup',()=>{if(dragX!==null&&Math.abs(moved)>40)go(sel+(moved<0?1:-1));dragX=null});
+addEventListener('pointermove',e=>{if(dragX!==null)moved=e.clientX-dragX});
+// Click a car
+const ray=new THREE.Raycaster(),m2=new THREE.Vector2();
+canvas.addEventListener('click',e=>{if(Math.abs(moved)>5)return;const r=canvas.getBoundingClientRect();
+  m2.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(m2,camera);
+  const hit=ray.intersectObjects(cars,true)[0];if(hit){let o=hit.object;while(!cars.includes(o))o=o.parent;go(cars.indexOf(o))}});
+go(0);
+
+function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;
+  const mob=w<950;camera.position.set(0,mob?10:8.5,mob?30:25);camera.lookAt(0,mob?2.6:1.4,0);
+  camera.setViewOffset(w,h,mob?0:-w*.12,mob?h*.04:-h*.1,w,h);camera.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+
+const clock=new THREE.Clock();
+renderer.setAnimationLoop(()=>{
+  const t=clock.getElapsedTime();
+  const prev=wheel.rotation.y;
+  wheel.rotation.y+=(target+(dragX!==null?moved*.002:0)-wheel.rotation.y)*.07;
+  const spin=wheel.rotation.y-prev;
+  cars.forEach((c,i)=>{
+    const front=i===sel;
+    c.position.y+=((front?.22+Math.sin(t*2)*.06+.1:.22)-c.position.y)*.1;
+    c.rotation.y+= front?.006:.0015;
+    c.userData.wheels.forEach(w=>w.rotation.z-=spin*6);
+    pods[i].scale.setScalar(THREE.MathUtils.lerp(pods[i].scale.x,front?1.08:1,.1));
+  });
+  renderer.render(scene,camera);
+});
+</script>
+</body>
+</html>
